@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.sky.annotation.AutoFill;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
@@ -17,12 +18,14 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 新增菜品和对应口味
+     *
      * @param dishDTO
      */
     @Override
@@ -53,7 +57,7 @@ public class DishServiceImpl implements DishService {
         Long id = dish.getId();
         //口味表添加n条数据
         List<DishFlavor> flavors = dishDTO.getFlavors();
-        if(flavors != null && flavors.size() > 0){
+        if (flavors != null && flavors.size() > 0) {
             flavors.forEach(flavor -> {
                 flavor.setDishId(id);
             });
@@ -70,7 +74,19 @@ public class DishServiceImpl implements DishService {
     }
 
     /**
+     * 根据分类id查询菜品列表
+     *
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<Dish> list(Long categoryId) {
+        return dishMapper.list(categoryId);
+    }
+
+    /**
      * 批量删除菜品信息
+     *
      * @param ids
      */
     //TODO 本方法一旦检测到传来的id有一个不能删就全部不删，可以优化成只不删不能删的
@@ -81,13 +97,13 @@ public class DishServiceImpl implements DishService {
         ids.forEach(id -> {
             Dish dish = dishMapper.getById(id);
             //如果正在起售，抛出异常
-            if(dish.getStatus() == StatusConstant.ENABLE){
+            if (dish.getStatus() == StatusConstant.ENABLE) {
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
             }
         });
         //判断是否被关联
         List<Long> setmealId = setmealDishMapper.getSetmealIdByDishId(ids);
-        if(setmealId != null && setmealId.size() > 0){
+        if (setmealId != null && setmealId.size() > 0) {
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
         //删除菜品数据
@@ -112,6 +128,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 修改菜品信息和口味
+     *
      * @param dishDTO
      */
     @Transactional
@@ -129,11 +146,28 @@ public class DishServiceImpl implements DishService {
         dishIds.add(dishDTO.getId());
         dishFlavorMapper.deleteByDishId(dishIds);
         //添加口味信息
-        if(flavors != null && flavors.size() > 0){
+        if (flavors != null && flavors.size() > 0) {
             flavors.forEach(flavor -> {
                 flavor.setDishId(dishDTO.getId());
             });
             dishFlavorMapper.insertBatch(flavors);
         }
+    }
+
+    /**
+     * 修改菜品状态
+     *
+     * @param id
+     * @param status
+     */
+    @Override
+    public void startOrStop(Long id, Integer status) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build();
+        dishMapper.update(dish);
     }
 }

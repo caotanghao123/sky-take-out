@@ -23,6 +23,13 @@ public interface DishMapper {
     Integer countByCategoryId(Long categoryId);
 
     /**
+     * 根据分类id查询菜品列表(新增/修改套餐选择菜品用)
+     * @param categoryId
+     * @return
+     */
+    List<Dish> list(Long categoryId);
+
+    /**
      * 新增菜品
      * @param dish
      */

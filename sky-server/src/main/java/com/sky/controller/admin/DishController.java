@@ -46,6 +46,18 @@ public class DishController {
     }
 
     /**
+     * 根据分类id查询菜品列表(新增/修改套餐时选择菜品用)
+     * @param categoryId
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<Dish>> list(Long categoryId){
+        log.info("根据分类id:{}查询菜品列表", categoryId);
+        List<Dish> list = dishService.list(categoryId);
+        return Result.success(list);
+    }
+
+    /**
      * 菜品批量删除
      * @param ids
      * @return
@@ -78,6 +90,19 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO){
         log.info("修改菜品，{}", dishDTO);
         dishService.updateWithFlavor(dishDTO);
+        return Result.success();
+    }
+
+    /**
+     * 修改菜品状态
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("修改菜品状态 id：{}，状态：{}", id, status);
+        dishService.startOrStop(id, status);
         return Result.success();
     }
 }
