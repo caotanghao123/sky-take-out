@@ -44,6 +44,11 @@ public class SetMealController {
         return Result.success();
     }
 
+    /**
+     * 套餐分页查询
+     * @param setmealPageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO){
         log.info("分页查询{}", setmealPageQueryDTO);
