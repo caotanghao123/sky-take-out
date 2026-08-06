@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -70,5 +71,15 @@ public class SetMealController {
         return Result.success();
     }
 
-
+    /**
+     * 修改套餐信息
+     * @param setmealDTO
+     * @return
+     */
+    @PutMapping
+    public Result update(@RequestBody SetmealDTO setmealDTO){
+        log.info("开始修改套餐信息，{}", setmealDTO);
+        setMealService.update(setmealDTO);
+        return Result.success();
+    }
 }

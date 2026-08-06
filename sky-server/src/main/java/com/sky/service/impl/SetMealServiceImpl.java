@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -90,5 +92,31 @@ public class SetMealServiceImpl implements SetMealService {
         setmealMapper.deleteBatch(ids);
         //删除套餐的菜品信息（setmeal_dish）
         setmealDishMapper.deleteBatch(ids);
+    }
+
+    /**
+     * 修改套餐信息
+     * @param setmealDTO
+     */
+    @Transactional
+    @Override
+    public void update(SetmealDTO setmealDTO) {
+        //修改套餐基本信息
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        setmealMapper.update(setmeal);
+        //删除套餐关联菜品信息
+        List<Long> setmealId = new ArrayList<>();
+        setmealId.add(setmeal.getId());
+        setmealDishMapper.deleteBatch(setmealId);
+        //新增套餐关联菜品信息
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        if (setmealDishes != null && setmealDishes.size() > 0){
+            setmealDishes.forEach(setmealDish -> {
+                setmealDish.setSetmealId(setmeal.getId());
+            });
+            setmealDishMapper.save(setmealDishes);
+        }
+
     }
 }
