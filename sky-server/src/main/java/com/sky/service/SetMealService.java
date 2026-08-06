@@ -5,13 +5,15 @@ import com.sky.entity.Setmeal;
 import com.sky.result.PageResult;
 import com.sky.vo.SetmealVO;
 
+import java.util.List;
+
 public interface SetMealService {
 
     /**
      * 根据套餐id查询
      * @param id
      */
-    SetmealVO getBySetMealId(Long id);
+    SetmealVO getBySetMealIdReturnSetmealVO(Long id);
 
     /**
      * 新增套餐信息
@@ -25,4 +27,10 @@ public interface SetMealService {
      * @return
      */
     PageResult page(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 批量删除
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }

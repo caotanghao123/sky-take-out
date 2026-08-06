@@ -9,6 +9,9 @@ import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.awt.image.PixelGrabber;
+import java.util.List;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -26,7 +29,7 @@ public interface SetmealMapper {
      * @param id
      * @return
      */
-    SetmealVO getBySetMealId(Long id);
+    SetmealVO getBySetMealIdReturnSetmealVO(Long id);
 
     /**
      * 插入菜品信息
@@ -41,4 +44,17 @@ public interface SetmealMapper {
      * @return
      */
     Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 批量删除套餐基本信息
+     * @param setmealIds
+     */
+    void deleteBatch(List<Long> setmealIds);
+
+    /**
+     * 根据套餐id查询信息
+     * @param id
+     * @return
+     */
+    Setmeal getById(Long id);
 }

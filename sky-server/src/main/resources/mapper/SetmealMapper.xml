@@ -24,7 +24,15 @@
                 #{createUser},
                 #{updateUser})
     </insert>
-    <select id="getBySetMealId" resultType="com.sky.vo.SetmealVO">
+    <delete id="deleteBatch">
+        delete
+        from setmeal
+        where id in
+        <foreach collection="setmealIds" item="setmeal" open="(" separator="," close=")">
+            #{setmeal}
+        </foreach>
+    </delete>
+    <select id="getBySetMealIdReturnSetmealVO" resultType="com.sky.vo.SetmealVO">
         select setmeal.*, category.name as category_name
         from setmeal
         left join category on setmeal.category_id = category.id
@@ -49,5 +57,10 @@
             and s.status = #{status}
         </if>
         </where>
+    </select>
+    <select id="getById" resultType="com.sky.entity.Setmeal">
+        select *
+        from setmeal
+        where id = #{id}
     </select>
 </mapper>

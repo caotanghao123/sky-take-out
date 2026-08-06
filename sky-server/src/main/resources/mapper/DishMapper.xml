@@ -72,7 +72,7 @@
         </where>
         order by d.update_time desc
     </select>
-    <select id="getById" resultType="com.sky.entity.Dish">
+    <select id="getById" resultType="com.sky.entity.Dish" >
         select *
         from dish
         where id = #{id}

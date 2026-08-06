@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 套餐管理
  */
@@ -28,7 +30,7 @@ public class SetMealController {
     @GetMapping("/{id}")
     public Result<SetmealVO> getById(@PathVariable Long id){
         log.info("查询id为{}的信息", id);
-        SetmealVO setMeal = setMealService.getBySetMealId(id);
+        SetmealVO setMeal = setMealService.getBySetMealIdReturnSetmealVO(id);
         return Result.success(setMeal);
     }
 
@@ -55,4 +57,18 @@ public class SetMealController {
         PageResult pageResult = setMealService.page(setmealPageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public Result delete(@RequestParam List<Long> ids){
+        log.info("批量删除，{}", ids);
+        setMealService.deleteBatch(ids);
+        return Result.success();
+    }
+
+
 }

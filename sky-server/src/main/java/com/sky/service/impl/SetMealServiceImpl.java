@@ -2,10 +2,14 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
@@ -27,9 +31,9 @@ public class SetMealServiceImpl implements SetMealService {
     @Autowired
     private SetmealDishMapper setmealDishMapper;
     @Override
-    public SetmealVO getBySetMealId(Long id) {
+    public SetmealVO getBySetMealIdReturnSetmealVO(Long id) {
 
-        SetmealVO setMealVO = setmealMapper.getBySetMealId(id);
+        SetmealVO setMealVO = setmealMapper.getBySetMealIdReturnSetmealVO(id);
         List<SetmealDish> setmealDishes = setmealDishMapper.getBySetmealId(id);
         setMealVO.setSetmealDishes(setmealDishes);
         return setMealVO;
@@ -65,5 +69,26 @@ public class SetMealServiceImpl implements SetMealService {
         PageHelper.startPage(setmealPageQueryDTO.getPage(),setmealPageQueryDTO.getPageSize());
         Page<SetmealVO> page = setmealMapper.pageQuery(setmealPageQueryDTO);
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * 批量删除
+     * @param ids
+     */
+    // TODO 本处还是一个不能删就全不能删的问题
+    @Transactional
+    @Override
+    public void deleteBatch(List<Long> ids) {
+        //判断是否在售
+        ids.forEach(id ->{
+            Integer status = setmealMapper.getById(id).getStatus();
+            if(status == StatusConstant.ENABLE){
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+            }
+        });
+        //删除套餐基本信息
+        setmealMapper.deleteBatch(ids);
+        //删除套餐的菜品信息（setmeal_dish）
+        setmealDishMapper.deleteBatch(ids);
     }
 }
