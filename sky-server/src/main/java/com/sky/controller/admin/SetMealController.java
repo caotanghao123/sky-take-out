@@ -9,6 +9,7 @@ import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.events.Event;
 
 import java.util.List;
 
@@ -80,6 +81,13 @@ public class SetMealController {
     public Result update(@RequestBody SetmealDTO setmealDTO){
         log.info("开始修改套餐信息，{}", setmealDTO);
         setMealService.update(setmealDTO);
+        return Result.success();
+    }
+
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, @RequestParam("id") Long setmealId){
+        log.info("修改套餐起售状态，{},{}",status, setmealId);
+        setMealService.startOrStop(status, setmealId);
         return Result.success();
     }
 }

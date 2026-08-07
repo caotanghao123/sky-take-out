@@ -117,6 +117,21 @@ public class SetMealServiceImpl implements SetMealService {
             });
             setmealDishMapper.save(setmealDishes);
         }
+    }
 
+    /**
+     * 修改status
+     * @param status
+     * @param setmealId
+     */
+    @Override
+    public void startOrStop(Integer status, Long setmealId) {
+        Setmeal setmeal = Setmeal.builder()
+                .id(setmealId)
+                .status(status)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build();
+        setmealMapper.update(setmeal);
     }
 }

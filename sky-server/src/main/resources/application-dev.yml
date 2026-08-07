@@ -11,3 +11,8 @@ sky:
     access-key-id: ${OSS_ACCESS_KEY_ID:}
     access-key-secret: ${OSS_ACCESS_KEY_SECRET:}
     bucket-name: cth-web
+  redis:
+    host: localhost
+    port: 6379
+    password: hgwd1122
+    database: 1
