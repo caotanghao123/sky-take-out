@@ -16,3 +16,6 @@ sky:
     port: 6379
     password: hgwd1122
     database: 1
+  wechat:
+    appid: wxa61a6da68bd94e11
+    secret: fcf3dcc7b3b7608490c4316cba381a35

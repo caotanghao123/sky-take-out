@@ -61,4 +61,11 @@ public interface DishMapper {
      */
     @AutoFill(OperationType.UPDATE)
     void update(Dish dish);
+
+    /**
+     * 根据传入dish对象的信息，查找符合条件的dish对象
+     * @param dish
+     * @return
+     */
+    List<Dish> listWithAll(Dish dish);
 }
